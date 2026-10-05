@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApproveFlow — Content Approval Portal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="flex min-h-screen">
+
+        <aside class="w-64 shrink-0 bg-slate-900 text-white hidden lg:flex flex-col">
+
+            <div class="p-7">
+                <h1 class="text-2xl font-bold tracking-tight">ApproveFlow</h1>
+                <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest" id="sidebarLabel">Agency</p>
+            </div>
+
+            <div class="px-5 pb-5">
+                <p class="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Viewing as</p>
+                <div class="bg-slate-800 rounded-lg p-1 flex gap-1">
+                    <button data-role="agency"
+                        class="flex-1 text-xs font-semibold py-1.5 rounded transition bg-blue-600 text-white">Agency</button>
+                    <button data-role="client"
+                        class="flex-1 text-xs font-semibold py-1.5 rounded transition text-slate-400 hover:text-white">Client</button>
+                </div>
+            </div>
+
+            <nav class="flex-1">
+
+                <a href="#" data-page="board" data-label="Board"
+                    class="flex items-center gap-3 px-7 py-3.5 text-slate-300 hover:bg-white/10 hover:text-white transition">
+                    <i class="fa-solid fa-table-columns w-5 text-center"></i>Board
+                </a>
+
+                <a href="#" data-page="calendar" data-label="Calendar"
+                    class="flex items-center gap-3 px-7 py-3.5 text-slate-300 hover:bg-white/10 hover:text-white transition">
+                    <i class="fa-regular fa-calendar w-5 text-center"></i>Calendar
+                </a>
+
+                <a href="#" data-page="review" data-label="Review"
+                    class="flex items-center gap-3 px-7 py-3.5 text-slate-300 hover:bg-white/10 hover:text-white transition">
+                    <i class="fa-solid fa-comments w-5 text-center"></i>Review queue
+                    <span id="navBadge" class="ml-auto bg-amber-500 text-slate-900 text-[10px] font-bold px-1.5 py-0.5 rounded">0</span>
+                </a>
+
+                <a href="#" data-page="activity" data-label="Activity"
+                    class="flex items-center gap-3 px-7 py-3.5 text-slate-300 hover:bg-white/10 hover:text-white transition">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>Activity
+                </a>
+
+            </nav>
+
+            <div class="p-5 border-t border-white/10 space-y-2">
+                <button id="samplesBtn"
+                    class="w-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold py-2 rounded transition">
+                    Load demo data
+                </button>
+                <button id="resetBtn"
+                    class="w-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold py-2 rounded transition">
+                    Clear all
+                </button>
+                <p class="text-[11px] text-slate-500 leading-relaxed pt-1">
+                    Prototype. Everything runs in this browser, nothing is uploaded to a server.
+                </p>
+            </div>
+
+        </aside>
+
+        <div class="flex-1 min-w-0">
+
+            <header class="bg-white border-b border-slate-200 px-6 lg:px-10 py-5">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold" id="pageTitle">Content board</h2>
+                        <p class="text-sm text-slate-500" id="pageSubtitle">Upload creatives, send them to clients, track every decision</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="clientFilter"
+                            class="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                        </select>
+
+                        <button data-open-upload
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold transition">
+                            <i class="fa-solid fa-plus mr-2"></i>New creative
+                        </button>
+
+                        <button id="submitAllBtn"
+                            class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded text-sm font-semibold transition">
+                            <i class="fa-solid fa-paper-plane mr-2"></i>Submit drafts
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:hidden mt-4 flex gap-2 overflow-x-auto pb-1">
+                    <button data-page="board" class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded text-xs font-semibold">Board</button>
+                    <button data-page="calendar" class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded text-xs font-semibold">Calendar</button>
+                    <button data-page="review" class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded text-xs font-semibold">Review</button>
+                    <button data-page="activity" class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded text-xs font-semibold">Activity</button>
+                </div>
+            </header>
+
+            <section class="px-6 lg:px-10 py-7 grid grid-cols-2 xl:grid-cols-5 gap-4" id="statsRow"></section>
+
+            <main class="px-6 lg:px-10 pb-16">
+
+                <div data-view="board">
+                    <div id="boardGrid" class="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5"></div>
+                </div>
+
+                <div data-view="calendar" class="bg-white rounded-lg border border-slate-200 p-6">
+                    <h3 class="font-bold text-lg mb-1">Content calendar</h3>
+                    <p class="text-sm text-slate-500 mb-5">Everything scheduled, grouped by date, with its current status</p>
+                    <div id="calendarList"></div>
+                </div>
+
+                <div data-view="review">
+                    <div id="reviewPane" class="grid lg:grid-cols-2 gap-6"></div>
+                </div>
+
+                <div data-view="activity">
+                    <div class="bg-white rounded-lg border border-slate-200 p-6">
+                        <h3 class="font-bold text-lg mb-1">Decision history</h3>
+                        <p class="text-sm text-slate-500 mb-5">Every approve, reject and change request, newest first</p>
+                        <div id="activityList"></div>
+                    </div>
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <div id="detailModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 p-4 overflow-y-auto">
+        <div class="min-h-full flex items-start justify-center py-6">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden">
+                <div id="detailBody" class="max-h-[88vh] overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="uploadModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 p-4 overflow-y-auto">
+        <div class="min-h-full flex items-start justify-center py-6">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                    <h3 class="font-bold text-lg">New creative</h3>
+                    <button data-close-upload class="text-slate-400 hover:text-slate-700 text-xl leading-none">&times;</button>
+                </div>
+
+                <form id="creativeForm" class="p-6 space-y-4">
+
+                    <div>
+                        <label for="fTitle" class="text-sm font-semibold text-slate-700">Title</label>
+                        <input id="fTitle" required placeholder="Monsoon Sale Carousel"
+                            class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="fClient" class="text-sm font-semibold text-slate-700">Client</label>
+                            <select id="fClient" required
+                                class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"></select>
+                        </div>
+
+                        <div>
+                            <label for="fType" class="text-sm font-semibold text-slate-700">Type</label>
+                            <select id="fType"
+                                class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                                <option value="instagram">Instagram Post</option>
+                                <option value="reel">Reel</option>
+                                <option value="carousel">Carousel</option>
+                                <option value="banner">Banner Ad</option>
+                                <option value="story">Story</option>
+                                <option value="video">Video Ad</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="fCampaign" class="text-sm font-semibold text-slate-700">Campaign</label>
+                            <input id="fCampaign" placeholder="Monsoon Sale 2026"
+                                class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label for="fDate" class="text-sm font-semibold text-slate-700">Scheduled date</label>
+                            <input id="fDate" type="date"
+                                class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="fCaption" class="text-sm font-semibold text-slate-700">Caption</label>
+                        <textarea id="fCaption" rows="3" placeholder="Up to 40% off new arrivals..."
+                            class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="fImage" class="text-sm font-semibold text-slate-700">Creative image</label>
+                        <p class="text-xs text-slate-500 mt-0.5 mb-2">
+                            Optional. Stored inside this browser only. Leave empty to use a type placeholder.
+                        </p>
+                        <input id="fImage" type="file" accept="image/*"
+                            class="w-full text-sm text-slate-600 border border-slate-300 rounded-lg p-2 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-slate-100 file:text-slate-700 file:text-xs file:font-semibold">
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded text-sm font-semibold transition">
+                            Save as draft
+                        </button>
+                        <button type="button" data-close-upload
+                            class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded text-sm font-semibold transition">
+                            Cancel
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="hidden"></div>
+
+    <script src="js/model.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/samples.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
